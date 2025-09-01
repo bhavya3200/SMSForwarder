@@ -6,6 +6,7 @@ buildscript {
     }
 }
 
-tasks.register("clean", Delete::class) {
-    delete(rootProject.buildDir)
+// Groovy syntax: use Delete (not Delete::class)
+tasks.register('clean', Delete) {
+    delete rootProject.buildDir
 }
