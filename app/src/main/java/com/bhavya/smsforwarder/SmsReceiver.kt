@@ -65,9 +65,6 @@ class SmsReceiver : BroadcastReceiver() {
         }
     }
 
-    private fun parseList(raw: String?): List<String> =
-        raw?.split('\n', ',', ';')?.map { it.trim() }?.filter { it.isNotEmpty() } ?: emptyList()
-
     private fun normalizeNumber(s: String): String {
         val digits = s.filter { it.isDigit() }
         return if (digits.length > 10) digits.takeLast(10) else digits
