@@ -7,13 +7,14 @@ android {
     namespace 'com.bhavya.smsforwarder'
     compileSdk 34
 
-    defaultConfig {
-        applicationId "com.bhavya.smsforwarder"
-        minSdk 24
-        targetSdk 34
-        versionCode 1
-        versionName "1.0"
-    }
+  defaultConfig {
+    applicationId "com.bhavya.smsforwarder"
+    minSdk 21        // was 24
+    targetSdk 34
+    versionCode 1
+    versionName "1.0"
+}
+
 
     buildFeatures { viewBinding true }
 
