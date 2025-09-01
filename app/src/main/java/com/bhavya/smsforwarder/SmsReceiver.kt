@@ -11,6 +11,11 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 
+// Timestamp imports
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+
 class SmsReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
@@ -24,6 +29,7 @@ class SmsReceiver : BroadcastReceiver() {
         val viaTelegram = prefs.getBoolean("viaTelegram", false)
         val viaWa = prefs.getBoolean("viaWa", false)
 
+        // Single-target (existing) fields
         val target = prefs.getString("target", "")?.trim().orEmpty()
         val botToken = prefs.getString("botToken", "")?.trim().orEmpty()
         val chatId = prefs.getString("chatId", "")?.trim().orEmpty()
@@ -53,17 +59,46 @@ class SmsReceiver : BroadcastReceiver() {
         if (onlyIfKw.isNotEmpty() && !matchesKeyword(body, onlyIfKw)) return
         if (skipOtp && looksLikeOtp(body)) return
 
-        val text = "[FWD] From: $from\n$body"
+        // Timestamp (uses saved timezone if present)
+        val zoneId = runCatching {
+            ZoneId.of(prefs.getString("timezone", ZoneId.systemDefault().id)!!)
+        }.getOrElse { ZoneId.systemDefault() }
+        val ts = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss z")
+            .withZone(zoneId)
+            .format(Instant.now())
+
+        val text = "[FWD @ $ts] From: $from\n$body"
+
+        // Optional multi-recipient support if you saved "smsRecipients" (one per line)
+        val recipients = parseList(prefs.getString("smsRecipients", ""))
+            .ifEmpty { listOfNotEmpty(target) }
 
         val pending = goAsync()
         Executors.newSingleThreadExecutor().execute {
             try {
-                if (viaSms && target.isNotEmpty()) sendViaSms(context, target, text)
-                if (viaTelegram && botToken.isNotEmpty() && chatId.isNotEmpty()) sendToTelegram(botToken, chatId, text)
-                if (viaWa && waPhoneNumberId.isNotEmpty() && waToken.isNotEmpty() && waTo.isNotEmpty()) sendToWhatsApp(waPhoneNumberId, waToken, waTo, text)
+                if (viaSms && recipients.isNotEmpty()) {
+                    recipients.forEach { r -> sendViaSms(context, r, text) }
+                }
+                if (viaTelegram && botToken.isNotEmpty() && chatId.isNotEmpty()) {
+                    sendToTelegram(botToken, chatId, text)
+                }
+                if (viaWa && waPhoneNumberId.isNotEmpty() && waToken.isNotEmpty() && waTo.isNotEmpty()) {
+                    sendToWhatsApp(waPhoneNumberId, waToken, waTo, text)
+                }
             } finally { pending.finish() }
         }
     }
+
+    // ---------- Helpers ----------
+
+    private fun listOfNotEmpty(s: String): List<String> =
+        if (s.isNotEmpty()) listOf(s) else emptyList()
+
+    private fun parseList(raw: String?): List<String> =
+        raw?.split('\n', ',', ';')
+            ?.map { it.trim() }
+            ?.filter { it.isNotEmpty() }
+            ?: emptyList()
 
     private fun normalizeNumber(s: String): String {
         val digits = s.filter { it.isDigit() }
