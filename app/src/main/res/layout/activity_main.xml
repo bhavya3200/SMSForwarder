@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+    <LinearLayout
+        android:orientation="vertical" android:padding="20dp"
+        android:layout_width="match_parent" android:layout_height="wrap_content">
+
+        <TextView android:text="Forward all incoming SMS" android:textSize="18sp" android:textStyle="bold"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+
+        <CheckBox android:id="@+id/cbEnabled" android:text="Enable forwarding"
+            android:layout_marginTop="8dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+
+        <TextView android:text="Forward via:" android:layout_marginTop="8dp"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+
+        <CheckBox android:id="@+id/cbViaSms" android:text="SMS (to phone number below)"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+        <EditText android:id="@+id/etTarget" android:hint="+91XXXXXXXXXX" android:inputType="phone"
+            android:layout_width="match_parent" android:layout_height="wrap_content"/>
+
+        <CheckBox android:id="@+id/cbViaTelegram" android:text="Telegram Bot"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+        <EditText android:id="@+id/etBotToken" android:hint="Telegram BOT_TOKEN" android:inputType="textPassword"
+            android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <EditText android:id="@+id/etChatId" android:hint="@channel_username or numeric chat_id"
+            android:layout_width="match_parent" android:layout_height="wrap_content"/>
+
+        <CheckBox android:id="@+id/cbViaWa" android:text="WhatsApp Cloud API (Advanced)"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+        <EditText android:id="@+id/etWaPhoneNumberId" android:hint="WA Phone Number ID"
+            android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <EditText android:id="@+id/etWaToken" android:hint="WA Bearer Token" android:inputType="textPassword"
+            android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <EditText android:id="@+id/etWaTo" android:hint="WA recipient (e.g., 91XXXXXXXXXX)"
+            android:layout_width="match_parent" android:layout_height="wrap_content"/>
+
+        <View android:layout_width="match_parent" android:layout_height="1dp"
+            android:layout_marginTop="12dp" android:background="#DDDDDD"/>
+
+        <CheckBox android:id="@+id/cbSkipOtp" android:text="Skip messages that look like OTPs"
+            android:layout_marginTop="12dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+
+        <TextView android:text="Sender whitelist (one per line; leave empty to allow all)"
+            android:layout_marginTop="12dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+        <EditText android:id="@+id/etWhitelist" android:hint="+9198.., AXISBK, re:^SBI.*"
+            android:inputType="textMultiLine" android:minLines="3"
+            android:layout_width="match_parent" android:layout_height="wrap_content"/>
+
+        <TextView android:text="Sender blacklist (overrides whitelist)"
+            android:layout_marginTop="8dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+        <EditText android:id="@+id/etBlacklist" android:hint="VK-SPAMAD, re:(DEAL|SALE)"
+            android:inputType="textMultiLine" android:minLines="3"
+            android:layout_width="match_parent" android:layout_height="wrap_content"/>
+
+        <TextView android:text="Only-if keywords (forward only if present; optional)"
+            android:layout_marginTop="8dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+        <EditText android:id="@+id/etOnlyKeywords" android:hint="txn, re:\\bUPI\\b, statement"
+            android:inputType="textMultiLine" android:minLines="3"
+            android:layout_width="match_parent" android:layout_height="wrap_content"/>
+
+        <TextView android:text="Never-if keywords (block if present)"
+            android:layout_marginTop="8dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+        <EditText android:id="@+id/etNeverKeywords" android:hint="otp, one time password, re:\\b(?:PIN|CVV)\\b"
+            android:inputType="textMultiLine" android:minLines="3"
+            android:layout_width="match_parent" android:layout_height="wrap_content"/>
+
+        <Button android:id="@+id/btnSave" android:text="Save"
+            android:layout_marginTop="16dp" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+
+        <TextView android:id="@+id/tvStatus" android:text="" android:layout_marginTop="8dp"
+            android:layout_width="match_parent" android:layout_height="wrap_content"/>
+    </LinearLayout>
+</ScrollView>
