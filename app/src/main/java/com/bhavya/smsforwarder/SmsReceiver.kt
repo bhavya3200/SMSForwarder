@@ -1,4 +1,3 @@
-\
 package com.bhavya.smsforwarder
 
 import android.content.BroadcastReceiver
@@ -8,6 +7,8 @@ import android.provider.Telephony
 import android.telephony.SmsManager
 import java.util.concurrent.Executors
 import okhttp3.*
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 
 class SmsReceiver : BroadcastReceiver() {
@@ -44,6 +45,7 @@ class SmsReceiver : BroadcastReceiver() {
         val from = msgs.first().originatingAddress ?: "Unknown"
         val body = msgs.joinToString(separator = "") { it.displayMessageBody ?: "" }
 
+        // Filters
         if (body.startsWith("[FWD]")) return
         if (matchesSender(from, blacklist)) return
         if (whitelist.isNotEmpty() && !matchesSender(from, whitelist)) return
@@ -139,8 +141,12 @@ class SmsReceiver : BroadcastReceiver() {
             .put("type", "text")
             .put("text", JSONObject().put("body", text))
             .toString()
-        val body = RequestBody.create(MediaType.parse("application/json"), payload)
-        val req = Request.Builder().url(url).addHeader("Authorization", "Bearer $token").post(body).build()
+        val mediaType = "application/json".toMediaType()
+        val body = payload.toRequestBody(mediaType)
+        val req = Request.Builder().url(url)
+            .addHeader("Authorization", "Bearer $token")
+            .post(body)
+            .build()
         OkHttpClient().newCall(req).execute().use { }
     }
 }
