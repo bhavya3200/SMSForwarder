@@ -1,4 +1,3 @@
-\
 package com.bhavya.smsforwarder
 
 import android.Manifest
@@ -14,7 +13,7 @@ class MainActivity : AppCompatActivity() {
 
     private val requestPerms = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
-    ) { granted ->
+    ) {
         val ok = listOf(
             Manifest.permission.RECEIVE_SMS,
             Manifest.permission.SEND_SMS
